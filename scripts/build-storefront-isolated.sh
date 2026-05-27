@@ -50,14 +50,15 @@ echo "==> npm run build"
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=2048}"
 npm run build
 
-SERVER_JS=$(find "$BUILD_DIR/.next/standalone" -name server.js -type f 2>/dev/null | head -1)
-if [ -z "$SERVER_JS" ]; then
+if [ -f "$BUILD_DIR/.next/standalone/server.js" ]; then
+  STANDALONE="$BUILD_DIR/.next/standalone"
+elif [ -f "$BUILD_DIR/.next/standalone/apps/storefront/server.js" ]; then
+  STANDALONE="$BUILD_DIR/.next/standalone/apps/storefront"
+else
   echo "HATA: standalone server.js bulunamadı"
-  find "$BUILD_DIR/.next" -maxdepth 4 -type f 2>/dev/null | head -20
+  ls -la "$BUILD_DIR/.next/standalone" 2>/dev/null || true
   exit 1
 fi
-
-STANDALONE="$(dirname "$SERVER_JS")"
 echo "==> Standalone: $STANDALONE"
 
 cp -r "$BUILD_DIR/public" "$STANDALONE/"
