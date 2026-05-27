@@ -24,7 +24,14 @@ for i in $(seq 1 30); do
   sleep 2
 done
 
-echo "Starting storefront on :3001..."
+STANDALONE_SERVER="$ROOT/apps/storefront/.next/standalone/apps/storefront/server.js"
+if [ ! -f "$STANDALONE_SERVER" ]; then
+  echo "HATA: Standalone build yok: $STANDALONE_SERVER"
+  echo "Çalıştırın: bash scripts/server-deploy.sh"
+  exit 1
+fi
+
+echo "Starting storefront (standalone server.js) on :3001..."
 pm2 start ecosystem.config.cjs --only medusa-storefront
 pm2 save
 pm2 list
