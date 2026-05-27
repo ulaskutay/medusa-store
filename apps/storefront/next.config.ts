@@ -18,7 +18,23 @@ function resolvePackageDir(pkg: string): string {
   }
 }
 
+function getReactAliases() {
+  const reactDir = resolvePackageDir('react');
+  const reactDomDir = resolvePackageDir('react-dom');
+
+  return {
+    react: reactDir,
+    'react-dom': reactDomDir,
+    'react-dom/client': path.join(reactDomDir, 'client.js'),
+    'react-dom/server': path.join(reactDomDir, 'server.browser.js'),
+    'react/jsx-runtime': path.join(reactDir, 'jsx-runtime.js'),
+    'react/jsx-dev-runtime': path.join(reactDir, 'jsx-dev-runtime.js')
+  };
+}
+
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: path.join(__dirname, '../..'),
+  transpilePackages: ['@medusajs/ui'],
   trailingSlash: false,
   reactStrictMode: true,
   logging: {
@@ -94,8 +110,7 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      react: resolvePackageDir('react'),
-      'react-dom': resolvePackageDir('react-dom')
+      ...getReactAliases()
     };
     return config;
   }
