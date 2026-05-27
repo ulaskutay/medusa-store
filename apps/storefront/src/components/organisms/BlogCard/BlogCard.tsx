@@ -2,8 +2,8 @@ import Image from "next/image"
 import LocalizedClientLink from "@/components/molecules/LocalizedLink/LocalizedLink"
 import { BlogPost } from "@/types/blog"
 import { ArrowRightIcon } from "@/icons"
-import tailwindConfig from "../../../../tailwind.config"
 import { cn } from "@/lib/utils"
+import { themeIconColors } from "@/lib/theme-colors"
 
 interface BlogCardProps {
   post: BlogPost
@@ -37,7 +37,7 @@ export function BlogCard({ post, index }: BlogCardProps) {
           Read more{" "}
           <ArrowRightIcon
             size={20}
-            color={tailwindConfig.theme.extend.colors.tertiary}
+            color={themeIconColors.contentTertiary}
           />
         </div>
       </div>

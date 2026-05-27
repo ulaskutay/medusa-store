@@ -1,12 +1,15 @@
 import { listRegions } from "../data/regions"
 
 export const checkRegion = async (locale: string) => {
-  const regions = await listRegions()
-  const countries = regions
-    ?.map((r) => {
-      return r.countries?.map((c) => c.iso_2)
-    })
-    .flat()
+  try {
+    const regions = await listRegions()
+    const countries = regions
+      ?.flatMap((r) => r.countries?.map((c) => c.iso_2) ?? [])
+      .filter(Boolean) as string[]
 
-  return countries.includes(locale) ? true : false
+    if (!countries?.length) return true
+    return countries.includes(locale)
+  } catch {
+    return true
+  }
 }

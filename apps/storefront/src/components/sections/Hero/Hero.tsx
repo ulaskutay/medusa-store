@@ -1,7 +1,7 @@
 import Image from "next/image"
 
-import tailwindConfig from "../../../../tailwind.config"
 import { ArrowRightIcon } from "@/icons"
+import { themeIconColors } from "@/lib/theme-colors"
 import Link from "next/link"
 
 type HeroProps = {
@@ -50,7 +50,7 @@ export const Hero = ({ image, heading, paragraph, buttons }: HeroProps) => {
                 </span>
 
                 <ArrowRightIcon
-                  color={tailwindConfig.theme.extend.backgroundColor.primary}
+                  color={themeIconColors.bgPrimary}
                   aria-hidden
                 />
               </Link>
