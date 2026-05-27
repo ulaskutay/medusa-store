@@ -63,7 +63,11 @@ export const getRegion = async (countryCode: string) => {
       });
     });
 
-    const region = countryCode ? regionMap.get(countryCode) : regionMap.get('us');
+    const fallback =
+      process.env.NEXT_PUBLIC_DEFAULT_REGION || 'us'
+    const region = countryCode
+      ? regionMap.get(countryCode)
+      : regionMap.get(fallback) ?? regionMap.values().next().value;
 
     return region;
   } catch (e: any) {

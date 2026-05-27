@@ -24,6 +24,9 @@ coverage
 **/build
 **/dist
 
+# Medusa admin uploads (local dev)
+apps/backend/static/
+
 # Misc
 *.pem
 

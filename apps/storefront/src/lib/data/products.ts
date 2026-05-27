@@ -2,6 +2,7 @@
 
 import { HttpTypes } from '@medusajs/types';
 
+import { toHreflang } from '@/lib/helpers/hreflang';
 import { sortProducts } from '@/lib/helpers/sort-products';
 import { SortOptions } from '@/types/product';
 import { SellerProps } from '@/types/seller';
@@ -75,6 +76,7 @@ export const listProducts = async ({
       method: 'GET',
       query: {
         country_code: countryCode,
+        ...(countryCode ? { locale: toHreflang(countryCode) } : {}),
         category_id,
         collection_id,
         limit,
@@ -274,6 +276,7 @@ export const searchProducts = async (params: {
       body: {
         ...bodyParams,
         region_id,
+        ...(countryCode ? { locale: toHreflang(countryCode) } : {}),
         customer_id,
         facets,
         maxValuesPerFacet: 100,

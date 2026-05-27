@@ -1,6 +1,14 @@
 import 'server-only';
 import { cookies as nextCookies } from 'next/headers';
 
+/** Secure cookies only when the public site URL is HTTPS (HTTP + production breaks cart). */
+const useSecureCookies = (): boolean => {
+  const base = process.env.NEXT_PUBLIC_BASE_URL ?? '';
+  if (base.startsWith('https://')) return true;
+  if (base.startsWith('http://')) return false;
+  return process.env.NODE_ENV === 'production';
+};
+
 export const getAuthHeaders = async (): Promise<
   { authorization: string } | {}
 > => {
@@ -53,7 +61,7 @@ export const setAuthToken = async (token: string) => {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: useSecureCookies(),
   });
 };
 
@@ -74,8 +82,8 @@ export const setCartId = async (cartId: string) => {
   cookies.set('_medusa_cart_id', cartId, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
-    sameSite: 'strict',
-    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    secure: useSecureCookies(),
   });
 };
 

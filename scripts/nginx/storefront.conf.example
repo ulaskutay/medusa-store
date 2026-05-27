@@ -1,0 +1,30 @@
+# aaPanel: shop.senindomain.com → PM2 storefront (3001)
+# Panel: Website → Config → bu dosyayı referans alın veya yapıştırın
+
+server {
+    listen 80;
+    server_name shop.senindomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name shop.senindomain.com;
+
+    # aaPanel Let's Encrypt genelde şu yolları otomatik doldurur:
+    # ssl_certificate     /www/server/panel/vhost/cert/shop.senindomain.com/fullchain.pem;
+    # ssl_certificate_key /www/server/panel/vhost/cert/shop.senindomain.com/privkey.pem;
+
+    client_max_body_size 50m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}

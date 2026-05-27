@@ -27,6 +27,10 @@ export const toHreflang = (code: string): string => {
     hk: "zh-HK",
     sg: "en-SG",
     my: "ms-MY",
+    tr: "tr-TR",
   }
   return map[code] || code
 }
+
+/** URL ülke kodunu (tr) Medusa mağaza locale'ine (tr-TR) çevirir. */
+export const toStoreLocale = toHreflang
