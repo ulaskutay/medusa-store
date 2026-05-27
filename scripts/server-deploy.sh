@@ -23,6 +23,8 @@ export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=2048}"
 npm run build
 cd "$ROOT"
 
+bash "$ROOT/scripts/prepare-storefront-standalone.sh"
+
 if [ ! -f apps/storefront/.next/BUILD_ID ]; then
   echo "HATA: Build tamamlanmadı (.next/BUILD_ID yok)"
   exit 1

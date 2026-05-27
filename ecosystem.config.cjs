@@ -57,10 +57,13 @@ module.exports = {
     },
     {
       name: 'medusa-storefront',
-      cwd: './apps/storefront',
-      script: 'npm',
-      args: 'run start -- -p 3001',
-      env: storefrontEnv,
+      cwd: './apps/storefront/.next/standalone/apps/storefront',
+      script: 'server.js',
+      env: {
+        ...storefrontEnv,
+        PORT: '3001',
+        HOSTNAME: '0.0.0.0'
+      },
       instances: 1,
       exec_mode: 'fork',
       autorestart: true,

@@ -13,5 +13,7 @@ rm -rf apps/storefront/.next
 cd apps/storefront
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=2048}"
 npm run build
+cd "$ROOT"
+bash "$ROOT/scripts/prepare-storefront-standalone.sh"
 
 echo "==> Build OK"

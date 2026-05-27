@@ -33,6 +33,7 @@ function getReactAliases() {
 }
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   outputFileTracingRoot: path.join(__dirname, '../..'),
   transpilePackages: ['@medusajs/ui'],
   trailingSlash: false,
