@@ -42,6 +42,10 @@ yarn-error.log*
 # Turbo
 .turbo
 
+# Isolated storefront production build
+/storefront-build
+.storefront-standalone-path
+
 # vercel
 .vercel
 

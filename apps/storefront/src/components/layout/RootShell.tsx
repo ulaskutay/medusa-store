@@ -1,6 +1,6 @@
 "use client"
 
-import type { ReactNode } from "react"
+import { Suspense, type ReactNode } from "react"
 
 import { HtmlLangSetter } from "@/components/atoms/HtmlLangSetter/HtmlLangSetter"
 import { Providers } from "@/app/providers"
@@ -14,7 +14,9 @@ type RootShellProps = {
 export function RootShell({ children, cart }: RootShellProps) {
   return (
     <>
-      <HtmlLangSetter />
+      <Suspense fallback={null}>
+        <HtmlLangSetter />
+      </Suspense>
       <Providers cart={cart}>{children}</Providers>
     </>
   )

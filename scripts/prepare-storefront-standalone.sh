@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
-# next build (standalone) sonrası public + static kopyala
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SF="$ROOT/apps/storefront"
-TARGET="$SF/.next/standalone/apps/storefront"
 
-if [ ! -f "$TARGET/server.js" ]; then
-  echo "HATA: $TARGET/server.js yok — önce 'npm run build' çalıştırın"
+if [ -f "$SF/.next/standalone/apps/storefront/server.js" ]; then
+  TARGET="$SF/.next/standalone/apps/storefront"
+elif [ -f "$SF/.next/standalone/server.js" ]; then
+  TARGET="$SF/.next/standalone"
+else
+  echo "HATA: standalone server.js bulunamadı — önce npm run build"
   exit 1
 fi
 

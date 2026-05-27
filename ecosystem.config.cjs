@@ -42,6 +42,12 @@ const backendEnv = {
   ...loadEnvFile('apps/backend/.env')
 };
 
+const standalonePathFile = path.join(__dirname, '.storefront-standalone-path');
+let storefrontCwd = './apps/storefront/.next/standalone/apps/storefront';
+if (fs.existsSync(standalonePathFile)) {
+  storefrontCwd = fs.readFileSync(standalonePathFile, 'utf8').trim();
+}
+
 module.exports = {
   apps: [
     {
@@ -57,7 +63,7 @@ module.exports = {
     },
     {
       name: 'medusa-storefront',
-      cwd: './apps/storefront/.next/standalone/apps/storefront',
+      cwd: storefrontCwd,
       script: 'server.js',
       env: {
         ...storefrontEnv,
