@@ -19,7 +19,6 @@ function resolvePackageDir(pkg: string): string {
 }
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
   trailingSlash: false,
   reactStrictMode: true,
   logging: {
