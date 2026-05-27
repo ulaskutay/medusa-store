@@ -15,8 +15,7 @@ rsync -a "$SRC/" "$BUILD_DIR/" \
   --exclude .next \
   --exclude '.turbo'
 
-# Monorepo outputFileTracingRoot kullanma
-cat > "$BUILD_DIR/next.config.deploy.ts" <<'EOF'
+cat > "$BUILD_DIR/next.config.ts" <<'EOF'
 import type { NextConfig } from 'next'
 import path from 'path'
 import { createRequire } from 'module'
@@ -27,6 +26,7 @@ checkEnvVariables()
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  outputFileTracingRoot: path.join(__dirname),
   trailingSlash: false,
   reactStrictMode: true,
   transpilePackages: ['@medusajs/ui'],
@@ -38,14 +38,11 @@ const nextConfig: NextConfig = {
 export default nextConfig
 EOF
 
-mv "$BUILD_DIR/next.config.ts" "$BUILD_DIR/next.config.monorepo.ts.bak" 2>/dev/null || true
-mv "$BUILD_DIR/next.config.deploy.ts" "$BUILD_DIR/next.config.ts"
-
 if [ -f "$SRC/.env.local" ]; then
   cp "$SRC/.env.local" "$BUILD_DIR/.env.local"
 fi
 
-echo "==> npm install (izole, monorepo yok)"
+echo "==> npm install (izole)"
 cd "$BUILD_DIR"
 npm install
 
@@ -53,15 +50,19 @@ echo "==> npm run build"
 export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=2048}"
 npm run build
 
-if [ -f "$BUILD_DIR/.next/standalone/server.js" ]; then
-  STANDALONE="$BUILD_DIR/.next/standalone"
-else
-  STANDALONE="$BUILD_DIR/.next/standalone/apps/storefront"
+SERVER_JS=$(find "$BUILD_DIR/.next/standalone" -name server.js -type f 2>/dev/null | head -1)
+if [ -z "$SERVER_JS" ]; then
+  echo "HATA: standalone server.js bulunamadı"
+  find "$BUILD_DIR/.next" -maxdepth 4 -type f 2>/dev/null | head -20
+  exit 1
 fi
 
-cp -r public "$STANDALONE/"
+STANDALONE="$(dirname "$SERVER_JS")"
+echo "==> Standalone: $STANDALONE"
+
+cp -r "$BUILD_DIR/public" "$STANDALONE/"
 mkdir -p "$STANDALONE/.next"
-cp -r .next/static "$STANDALONE/.next/"
+cp -r "$BUILD_DIR/.next/static" "$STANDALONE/.next/"
 
 echo "$STANDALONE" > "$ROOT/.storefront-standalone-path"
-echo "==> İzole build tamam: $STANDALONE"
+echo "==> İzole build tamam"
