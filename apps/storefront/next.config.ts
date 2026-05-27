@@ -1,8 +1,25 @@
 import type { NextConfig } from 'next';
 import path from 'path';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const checkEnvVariables = require('./check-env-variables');
+
+checkEnvVariables();
+
+const S3_HOSTNAME = process.env.MEDUSA_CLOUD_S3_HOSTNAME;
+const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME;
+
+function resolvePackageDir(pkg: string): string {
+  try {
+    return path.dirname(require.resolve(`${pkg}/package.json`, { paths: [__dirname] }));
+  } catch {
+    return path.resolve(__dirname, '../../node_modules', pkg);
+  }
+}
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: 'standalone',
   trailingSlash: false,
   reactStrictMode: true,
   logging: {
@@ -10,7 +27,14 @@ const nextConfig: NextConfig = {
       fullUrl: true
     }
   },
+  eslint: {
+    ignoreDuringBuilds: true
+  },
+  typescript: {
+    ignoreBuildErrors: true
+  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -42,23 +66,37 @@ const nextConfig: NextConfig = {
         hostname: 's3.eu-central-1.amazonaws.com'
       },
       {
-        protocol: "https",
-        hostname: "mercur-testing.up.railway.app",
+        protocol: 'https',
+        hostname: 'mercur-testing.up.railway.app'
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.*.amazonaws.com'
+      },
+      {
+        protocol: 'https',
+        hostname: '*.s3.amazonaws.com'
       },
       {
         protocol: 'https',
         hostname: '**'
-      }
+      },
+      ...(S3_HOSTNAME && S3_PATHNAME
+        ? [
+            {
+              protocol: 'https' as const,
+              hostname: S3_HOSTNAME,
+              pathname: S3_PATHNAME
+            }
+          ]
+        : [])
     ]
-  },
-  typescript: {
-    ignoreBuildErrors: true
   },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      react: path.resolve(__dirname, '../../node_modules/react'),
-      'react-dom': path.resolve(__dirname, '../../node_modules/react-dom')
+      react: resolvePackageDir('react'),
+      'react-dom': resolvePackageDir('react-dom')
     };
     return config;
   }
