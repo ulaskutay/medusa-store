@@ -124,6 +124,7 @@ export default async function Home({
 
   return (
     <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start text-primary">
+      <p className="w-full px-4 lg:px-8 text-2xl font-bold text-center">test</p>
       <link
         rel="preload"
         as="image"
