@@ -7,6 +7,9 @@ cd "$ROOT"
 echo "Checking single React install..."
 npm ls react --workspace=b2c-storefront 2>/dev/null | head -5 || true
 
+echo "Verifying admin build..."
+bash "$ROOT/scripts/verify-admin-build.sh"
+
 echo "Starting Medusa API..."
 pm2 delete medusa-api medusa-storefront 2>/dev/null || true
 pm2 start ecosystem.config.cjs --only medusa-api

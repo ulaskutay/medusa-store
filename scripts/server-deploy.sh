@@ -16,6 +16,13 @@ npm install
 echo "==> React 19.0.5"
 npm install react@19.0.5 react-dom@19.0.5 --workspace=b2c-storefront --save-exact
 
+echo "==> Backend build (admin panel)"
+cd apps/backend
+npm run build
+cd "$ROOT"
+bash "$ROOT/scripts/link-admin-public.sh"
+bash "$ROOT/scripts/verify-admin-build.sh"
+
 echo "==> Storefront build"
 rm -rf apps/storefront/.next
 cd apps/storefront
@@ -35,5 +42,14 @@ bash "$ROOT/scripts/pm2-start.sh"
 
 echo "==> Kontrol"
 curl -sf http://127.0.0.1:9000/health >/dev/null && echo "API: OK" || echo "API: FAIL"
-code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/dk)
-echo "Storefront /dk: HTTP $code"
+admin_js=$(curl -s http://127.0.0.1:9000/app | grep -oE '/app/assets/[^"]+\.js' | head -1)
+if [ -n "$admin_js" ]; then
+  js_size=$(curl -s "http://127.0.0.1:9000${admin_js}" | wc -c | tr -d ' ')
+  if [ "$js_size" -lt 10000 ]; then
+    echo "Admin /app: HATA — JS dosyası HTML dönüyor (${js_size} byte). pm2 restart medusa-api deneyin."
+  else
+    echo "Admin /app: OK (JS ${js_size} byte)"
+  fi
+fi
+code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:3001/tr)
+echo "Storefront /tr: HTTP $code"
