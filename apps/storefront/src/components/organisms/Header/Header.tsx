@@ -26,11 +26,16 @@ export const Header = async ({ locale } : {
     wishlist = await getUserWishlists({countryCode: locale})
   }
 
-  const regions = await listRegions()
+  const regions = await listRegions().catch(() => [])
 
   const wishlistCount = wishlist?.products.length || 0
 
-  const { categories, parentCategories } = (await listCategories({ query: { include_ancestors_tree: true } })) as {
+  const { categories, parentCategories } = (await listCategories({
+    query: { include_ancestors_tree: true }
+  }).catch(() => ({
+    categories: [] as HttpTypes.StoreProductCategory[],
+    parentCategories: [] as HttpTypes.StoreProductCategory[]
+  }))) as {
     categories: HttpTypes.StoreProductCategory[]
     parentCategories: HttpTypes.StoreProductCategory[]
   }
